@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "test": "brittle ./test/rals.test.js",
+    "test": "brittle ./tests/rals.test.js",
     "bundle": "node ./bundle.js"
   },
   "keywords": [
