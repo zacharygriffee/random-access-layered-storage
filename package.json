@@ -1,0 +1,34 @@
+{
+  "name": "random-access-layered-storage",
+  "version": "1.0.0",
+  "description": "A flexible, layered storage solution building on the random-access-storage interface. Provides an in-memory overlay with configurable eviction, paging, and strict size enforcement options, designed for complex data management scenarios.",
+  "type": "module",
+  "browser": "dist/index.min.js",
+  "homepage": "https://github.com/zacharygriffee/random-access-layered-storage#readme",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "brittle ./test.js",
+    "bundle": "node ./bundle.js"
+  },
+  "keywords": [
+    "key-value store",
+    "autobase",
+    "hyperbee",
+    "streams",
+    "prefix",
+    "batch",
+    "alpha"
+  ],
+  "dependencies": {
+    "b4a": "^1.6.7",
+    "lru-cache": "^11.0.1",
+    "random-access-storage": "^3.0.2"
+  },
+  "devDependencies": {
+    "brittle": "^3.7.0",
+    "random-access-file": "^4.0.7",
+    "random-access-memory": "^6.2.1",
+    "random-access-test": "^1.0.0"
+  }
+}
