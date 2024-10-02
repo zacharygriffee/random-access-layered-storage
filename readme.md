@@ -53,6 +53,100 @@ If you are using this library in environments where strict `random-access-storag
 
 By providing an interface that is mostly aligned with RAS, this library offers many of the benefits of the standard RAS system while also introducing additional flexibility in how data is managed in layered storage. Over time, as we achieve full compliance, you will be able to use this library in scenarios requiring strict adherence to the RAS specification.
 
+---
+
+## Constructor: `RandomAccessLayeredStorage`
+
+The `RandomAccessLayeredStorage` class provides an in-memory overlay for random-access storage (such as `RAM`, `RAF`, etc.), allowing for efficient caching, eviction, and flushing of data to underlying storage.
+
+### Usage
+
+```js
+const RAS = require('random-access-storage');
+const RandomAccessLayeredStorage = require('./path-to-your-layered-storage');
+
+const underlyingStorage = new RAM(); // or RAF, IndexedDB, etc.
+const layeredStorage = new RandomAccessLayeredStorage(underlyingStorage, {
+    pageSize: 1024 * 1024,   // 1MB page size
+    maxPages: 100,           // Max pages in memory
+    createIfMissing: true,   // Create file if it does not exist
+    strictSizeEnforcement: 1024 * 1024 * 10, // 10MB strict size limit
+    flushOnClose: true,      // Automatically flush on close
+    autoFlushOnEvict: true   // Automatically flush evicted pages
+});
+```
+
+### Constructor Parameters
+
+#### `underlyingStorage`
+- **Type:** `RandomAccessStorage` interface (e.g., `RAM`, `RAF`)
+- **Description:** The underlying storage to be used by the `RandomAccessLayeredStorage` instance.
+
+#### `opts`
+- **Type:** `Object`
+- **Description:** Configuration options for the layered storage.
+
+### Available Options
+
+#### `pageSize`
+- **Type:** `number`
+- **Default:** `1024 * 1024` (1MB)
+- **Description:** The size (in bytes) of each page in memory. The storage works by loading and storing data in pages, where each page is cached in memory.
+
+#### `maxPages`
+- **Type:** `number`
+- **Default:** `100`
+- **Description:** The maximum number of pages to store in memory. Once this limit is reached, the least recently used (LRU) pages are evicted. If `autoFlushOnEvict` is enabled, modified pages will be flushed to the underlying storage before being evicted.
+
+#### `createIfMissing`
+- **Type:** `boolean`
+- **Default:** `true`
+- **Description:** If set to `true`, the underlying storage will be created if it doesn’t already exist. This is useful when dealing with new storage files.
+
+#### `strictSizeEnforcement`
+- **Type:** `number`
+- **Default:** `undefined`
+- **Description:** If provided, this enforces a maximum size limit (in bytes) for the storage. Any attempts to read or write beyond this size will result in an error.
+
+#### `flushOnClose`
+- **Type:** `boolean`
+- **Default:** `true`
+- **Description:** If set to `true`, the storage will automatically flush all modified pages to the underlying storage when it is closed.
+
+#### `autoFlushOnEvict`
+- **Type:** `boolean`
+- **Default:** `true`
+- **Description:** If set to `true`, pages evicted from memory due to LRU constraints will be automatically flushed to the underlying storage if they were modified.
+
+---
+
+### Example
+
+```js
+const ram = new RAM();
+const layeredStorage = new RandomAccessLayeredStorage(ram, {
+    pageSize: 1024,          // 1KB page size
+    maxPages: 50,            // Store up to 50 pages in memory
+    createIfMissing: true,   // Create if missing
+    strictSizeEnforcement: 1024 * 1024 * 5, // Enforce 5MB size limit
+    flushOnClose: true,      // Flush data when storage is closed
+    autoFlushOnEvict: true   // Flush pages when evicted from memory
+});
+
+layeredStorage.write(0, Buffer.from('Hello, world!'), err => {
+    if (err) throw err;
+    
+    layeredStorage.flush(0, 13, err => {
+        if (err) throw err;
+        console.log('Data flushed to underlying storage.');
+    });
+});
+```
+
+### Notes
+- The `RandomAccessLayeredStorage` class extends the `random-access-storage` interface, so it supports the standard methods like `write`, `read`, `del`, `truncate`, `flush`, and `close`.
+- Evictions are handled via the internal Least Recently Used (LRU) cache mechanism. Pages can be manually pinned or evicted as needed.
+
 ## Public Methods
 
 ### `open(callback)`
