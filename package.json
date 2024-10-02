@@ -11,13 +11,13 @@
     "bundle": "node ./bundle.js"
   },
   "keywords": [
-    "key-value store",
-    "autobase",
-    "hyperbee",
-    "streams",
-    "prefix",
-    "batch",
-    "alpha"
+    "random-access-storage",
+    "layered-storage",
+    "memory-overlay",
+    "storage",
+    "paging",
+    "eviction",
+    "data-management"
   ],
   "dependencies": {
     "b4a": "^1.6.7",
