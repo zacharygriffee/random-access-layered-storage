@@ -1,4 +1,5 @@
 name: Node.js Package
+
 on:
   pull_request:
     branches:
@@ -8,24 +9,42 @@ on:
 jobs:
   test-build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+
       - run: npm ci
+
       - run: npm test
 
   publish-npm-package:
     needs: test-build
+    if: github.ref == 'refs/heads/master' && success()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org/
+
       - run: npm ci
+
       - run: npm publish --access=public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
