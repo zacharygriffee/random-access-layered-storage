@@ -3,9 +3,22 @@ import { RandomAccessLayeredStorage } from '../index.js';
 import RAM from 'random-access-memory';
 import b4a from 'b4a';
 import RAF from 'random-access-file';
+import RAI from "@zacharygriffee/random-access-idb";
+import 'fake-indexeddb/auto';
 import {promisify} from "../lib/util/promisify.js";
 import {deferred} from "./utils/deferred.js";
 
+export function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
+    }
+    return result;
+}
 const cleanupArray = [];
 function cleanup(store, fn) {
     if (!store && !fn) {
@@ -38,6 +51,7 @@ function testWithStorages(name, testFunc, soloTest) {
             await promisify(store, "unlink");
         }),
         Layered: () => cleanup(new RandomAccessLayeredStorage(new RAM())),
+        RAI: () => cleanup(RAI("test-file" + makeid(20)), store => store.purge())
     };
 
     for (const [storageType, createStorage] of Object.entries(underlyingStorages)) {
@@ -514,7 +528,9 @@ testWithStorages('delete, flush, and checks underlying storage', async (t, file,
 
                     // Step 5: Ensure that the deleted section is zero-filled in the underlying storage or handle the error for other storages
                     underlyingStorage.read(deleteOffset, deleteSize, (err, buf) => {
-                        if (err && err.message.includes('Could not satisfy length')) {
+                        // note: messages differ between standard RAS and RAI,
+                        //       need to correct RAI message here.
+                        if (err && err.message.includes('Could not satisfy length') ) {
                             t.pass('Expected error when reading beyond the file size in the underlying storage');
                             t.pass("Even the assertion level");
                         } else {
