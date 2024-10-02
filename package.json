@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "A flexible, layered storage solution building on the random-access-storage interface. Provides an in-memory overlay with configurable eviction, paging, and strict size enforcement options, designed for complex data management scenarios.",
   "type": "module",
-  "browser": "dist/index.min.js",
   "homepage": "https://github.com/zacharygriffee/random-access-layered-storage#readme",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "test": "brittle ./test.js",
+    "test": "brittle ./test/rals.test.js",
     "bundle": "node ./bundle.js"
   },
   "keywords": [
