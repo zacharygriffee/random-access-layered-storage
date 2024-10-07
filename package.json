@@ -1,6 +1,6 @@
 {
   "name": "random-access-layered-storage",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "description": "A flexible, layered storage solution building on the random-access-storage interface. Provides an in-memory overlay with configurable eviction, paging, and strict size enforcement options, designed for complex data management scenarios.",
   "type": "module",
   "homepage": "https://github.com/zacharygriffee/random-access-layered-storage#readme",
