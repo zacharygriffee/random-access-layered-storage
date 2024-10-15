@@ -1,6 +1,6 @@
 {
   "name": "random-access-layered-storage",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "description": "A flexible, layered storage solution building on the random-access-storage interface. Provides an in-memory overlay with configurable eviction, paging, and strict size enforcement options, designed for complex data management scenarios.",
   "type": "module",
   "homepage": "https://github.com/zacharygriffee/random-access-layered-storage#readme",
@@ -28,8 +28,12 @@
     "random-access-storage": "^3.0.2"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "@zacharygriffee/random-access-idb": "^4.1.0",
+    "bring-your-own-storage-utilities": "^0.0.22",
     "brittle": "^3.7.0",
+    "localdrive": "^1.12.1",
     "random-access-file": "^4.0.7",
     "random-access-memory": "^6.2.1",
     "random-access-test": "^1.0.0"
